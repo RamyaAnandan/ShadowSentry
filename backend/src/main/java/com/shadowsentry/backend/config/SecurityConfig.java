@@ -3,13 +3,12 @@ package com.shadowsentry.backend.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,6 +19,7 @@ import com.shadowsentry.backend.security.JwtAuthenticationFilter;
 import com.shadowsentry.backend.security.JwtService;
 
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
@@ -31,12 +31,16 @@ public class SecurityConfig {
                     : userRepository.findByUsername(usernameOrEmail);
 
             var user = userOpt.orElseThrow(() ->
-                    new UsernameNotFoundException("User not found: " + usernameOrEmail));
+                    new org.springframework.security.core.userdetails.UsernameNotFoundException("User not found: " + usernameOrEmail));
+
+            String[] roles = (user.getRoles() != null && !user.getRoles().isEmpty())
+                    ? user.getRoles().toArray(String[]::new)
+                    : new String[]{"ROLE_USER"};
 
             return org.springframework.security.core.userdetails.User
                     .withUsername(user.getUsername())
-                    .password(user.getPassword())
-                    .roles(user.getRole() == null ? "USER" : user.getRole().name())
+                    .password(user.getPasswordHash())
+                    .authorities(roles)
                     .build();
         };
     }
@@ -47,41 +51,28 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(
-            UserDetailsService uds,
-            PasswordEncoder passwordEncoder
-    ) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(uds);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, UserDetailsService uds) {
+        return new JwtAuthenticationFilter(jwtService, uds);
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(
-            JwtService jwtService,
-            UserDetailsService userDetailsService
-    ) {
-        return new JwtAuthenticationFilter(jwtService, userDetailsService);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
-        return cfg.getAuthenticationManager();
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http,
-                                           DaoAuthenticationProvider authProvider,
-                                           JwtAuthenticationFilter jwtAuthFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> {}) // enable CORS (CorsConfigurationSource bean will be used)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/hello").permitAll()
-                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                // allow auth endpoints and incidents (risk) to be called without JWT
+                .requestMatchers("/api/v1/auth/**", "/api/v1/incidents/**", "/hello", "/ping").permitAll()
+                // protect user endpoints
+                .requestMatchers("/api/v1/user/**").hasRole("USER")
                 .anyRequest().authenticated()
             )
-            .authenticationProvider(authProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
