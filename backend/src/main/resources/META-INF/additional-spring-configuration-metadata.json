@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret key for signing JWT tokens."
+    },
+    {
+      "name": "jwt.accessTokenExpiryMs",
+      "type": "java.lang.Long",
+      "description": "JWT access token lifetime in milliseconds."
+    },
+    {
+      "name": "jwt.refreshTokenExpiryDays",
+      "type": "java.lang.Long",
+      "description": "Refresh token lifetime in days."
+    },
+    {
+      "name": "auth.refreshCookieName",
+      "type": "java.lang.String",
+      "description": "Cookie name for storing refresh tokens."
+    }
+  ]
+}
