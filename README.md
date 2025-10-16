@@ -55,7 +55,7 @@ The platform uses **Spring Boot**, **MongoDB**, and a **React-based dashboard** 
                           REST API Calls
                                   │
       ┌───────────────────────────┴───────────────────────────┐
-      │                        Backend                       │
+      │                        Backend                        │
       │     Spring Boot + MongoDB + Security Layer            │
       ├───────────────────────────┬───────────────────────────┤
       │   HIBPFeedService         │   DarkWebRiskService      │
@@ -107,7 +107,19 @@ mvn spring-boot:run
 -npm install
 -npm run dev
 
-👉Team Members :
+```
+---
+
+## 🔍 How It Works
+
+-1. User Authentication: Users register/login securely with JWT tokens.
+-2. Breach Detection: Backend queries the HIBP API for breach records linked to the user’s email.
+-3. Risk Scoring: AI model evaluates exposure level and computes a dynamic risk score.
+-4. Dark Web Crawling: TOR proxy scans .onion sources using regex patterns for leaked data.
+-5. Visualization: The React dashboard displays risk score, breach summaries, and AI insights.
+
+
+###👉Team Members :
 
 A huge shoutout to our team!
 
@@ -116,6 +128,4 @@ Padmanathan C - https://github.com/pc3604padma
 Subashree A - https://github.com/SUBA04116
 Ramya A - 
 
-
-## 🧩 Architecture  
-
+---
