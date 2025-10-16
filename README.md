@@ -2,7 +2,7 @@
 
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square)
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-3.x-brightgreen?style=flat-square)
-![MongoDB](https://img.shields.io/badge/MongoDB)
+![MongoDB](https://img.shields.io/badge/SpringBoot-3.x-brightgreen?style=flat-square)
 ![React](https://img.shields.io/badge/React-Frontend-blue?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)
 
