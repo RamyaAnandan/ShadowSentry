@@ -2,7 +2,7 @@
 
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square)
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-3.x-brightgreen?style=flat-square)
-![MongoDB](https://img.shields.io/badge/MongoDB-NoSQL-green?style=flat-square)
+![MongoDB](https://img.shields.io/badge/MongoDB)
 ![React](https://img.shields.io/badge/React-Frontend-blue?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)
 
@@ -118,8 +118,9 @@ mvn spring-boot:run
 - 4. Dark Web Crawling: TOR proxy scans .onion sources using regex patterns for leaked data.
 - 5. Visualization: The React dashboard displays risk score, breach summaries, and AI insights.
 
+---
 
-###👉Team Members :
+## 👉Team Members :
 
 A huge shoutout to our team!
 
@@ -129,3 +130,5 @@ A huge shoutout to our team!
 - Ramya A - 
 
 ---
+
+
